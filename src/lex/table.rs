@@ -1,77 +1,43 @@
-pub struct token {
-    content: string,
+use std::fmt;
+
+const RESERVED: [&str; 10] = [
+    "var", "function", "for", "continue", "else", "if", "return", "elif", "while", "break",
+];
+
+pub fn is_reversed(para: String) -> bool {
+    RESERVED.iter().any(|e| e.to_string() == para)
+}
+// const operator_table: [&str; 27] = [
+//     "+", "-", "*", "/", "<", "<=", ">", ">=", "=", "==", "!=", ",", "(", ")", "^", ",", "\"", "\'",
+//     "[", "]", "{", "}", "\\", ".", "?", ":", "!",
+// ];
+
+#[derive(Copy, Clone)]
+pub enum DfaState {
+    Start,
+    LetterNow,
+    WholePartNow,
+    FractionalPart,
+    DotNow,
+    SingleSymbolTerminalNow,
+    SingleSymbolNow,
+    DoubleSymbolNow,
+    StringStartNow,
+    StringEndNow,
+    Err,
+}
+#[derive(Clone, Debug)]
+pub enum Token {
+    Reserved(String),
+    Numbers(String),
+    Identifier(String),
+    Symbols(String),
+    StringLitral(String),
+    BooleanLitral(String),
 }
 
-pub static reserved_table: Vec<string> = {
-    "auto";
-    "break";
-    "case";
-    "char";
-    "const";
-    "continue";
-    "default";
-    "do";
-    "double";
-    "else";
-    "enum";
-    "extern";
-    "float";
-    "for";
-    "goto";
-    "if";
-    "int";
-    "long";
-    "register";
-    "return";
-    "short";
-    "signed";
-    "sizeof";
-    "static";
-    "struct";
-    "switch";
-    "typedef";
-    "union";
-    "unsigned";
-    "void";
-    "volatile";
-    "while"
-};
-
-pub static operator_table: Vec<char> = {
-    "+";
-    "-";
-    "*";
-    "/";
-    "<";
-    "<=";
-    ">";
-    ">=";
-    "=";
-    "==";
-    "!=";
-    ";";
-    "(";
-    ")";
-    "^";
-    ";";
-    "\"";
-    "\'";
-    "#";
-    "&";
-    "&&";
-    "|";
-    "||";
-    "%";
-    "~";
-    "<<";
-    ">>";
-    "[";
-    "]";
-    "{";
-    "}";
-    "\\";
-    ".";
-    "?";
-    ":";
-    "!"
-};
+impl fmt::Display for Token {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}

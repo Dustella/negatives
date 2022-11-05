@@ -1,6 +1,6 @@
 pub fn pre_process(text: String) -> Vec<String> {
     let mut result: Vec<String> = Vec::new();
-    let lines: Vec<&str> = text.split('\n').collect();
+    let lines: Vec<&str> = text.split_inclusive('\n').collect();
     let mut is_comment_now = false;
     for line in lines {
         if line.starts_with("//") {
