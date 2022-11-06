@@ -10,8 +10,8 @@ pub fn get_token(current_state: &mut state, current_char: char) {
                 *current_state = state::SingleSymbolNow
             }
             '"' => *current_state = state::StringStartNow,
-            ' ' => {}
-            _ => *current_state = state::Err,
+            ' ' | '\n' => {}
+            _ => *current_state = state::ErrFirst,
         },
         state::LetterNow => match current_char {
             'a'..='z' | 'A'..='Z' | '_' | '0'..='9' => { /*do nothing */ }
@@ -24,7 +24,7 @@ pub fn get_token(current_state: &mut state, current_char: char) {
         },
         state::DotNow => match current_char {
             '0'..='9' => *current_state = state::FractionalPart,
-            _ => *current_state = state::Err,
+            _ => *current_state = state::ErrFirst,
         },
         state::FractionalPart => match current_char {
             '0'..='9' => { /*do nothing */ }
@@ -40,7 +40,8 @@ pub fn get_token(current_state: &mut state, current_char: char) {
             '"' => *current_state = state::StringEndNow,
             _ => {}
         },
-        state::Err => {}
+        state::ErrFirst => *current_state = state::ErrAlready,
         state::DoubleSymbolNow => *current_state = state::Start,
+        state::ErrAlready => {}
     }
 }

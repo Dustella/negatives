@@ -1,6 +1,6 @@
 function aa(){
-    var a =  1.xxx;
-    var b =  "lalala";
+    var a = 1.xxx;
+    var b = "lalala";
 }
 
 if ( a  ==  1 ){

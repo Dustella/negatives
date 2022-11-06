@@ -1,5 +1,4 @@
 use std::fmt;
-
 const RESERVED: [&str; 10] = [
     "var", "function", "for", "continue", "else", "if", "return", "elif", "while", "break",
 ];
@@ -24,7 +23,8 @@ pub enum DfaState {
     DoubleSymbolNow,
     StringStartNow,
     StringEndNow,
-    Err,
+    ErrFirst,
+    ErrAlready,
 }
 #[derive(Clone, Debug)]
 pub enum Token {
