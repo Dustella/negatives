@@ -1,0 +1,6 @@
+[book]
+authors = ["Dustella"]
+language = "en"
+multilingual = false
+src = "docs"
+title = "negative"
