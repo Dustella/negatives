@@ -6,10 +6,6 @@ const RESERVED: [&str; 10] = [
 pub fn is_reversed(para: String) -> bool {
     RESERVED.iter().any(|e| e.to_string() == para)
 }
-// const operator_table: [&str; 27] = [
-//     "+", "-", "*", "/", "<", "<=", ">", ">=", "=", "==", "!=", ",", "(", ")", "^", ",", "\"", "\'",
-//     "[", "]", "{", "}", "\\", ".", "?", ":", "!",
-// ];
 
 #[derive(Copy, Clone)]
 pub enum DfaState {

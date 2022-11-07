@@ -59,12 +59,12 @@ pub fn show_tokens(tokens: Vec<Result<Vec<Token>, String>>) {
             _ => {
                 for token in line.as_ref().unwrap() {
                     match *token {
-                        Token::BooleanLitral(_) => print!("{} ", token.to_string().green()),
-                        Token::Identifier(_) => print!("{} ", token.to_string().bright_white()),
-                        Token::Numbers(_) => print!("{} ", token.to_string().purple()),
-                        Token::Reserved(_) => print!("{} ", token.to_string().bright_yellow()),
-                        Token::Symbols(_) => print!("{} ", token.to_string().bright_blue()),
-                        Token::StringLitral(_) => print!("{} ", token.to_string().purple()),
+                        Token::BooleanLitral(_) => print!("{}, ", token.to_string().green()),
+                        Token::Identifier(_) => print!("{}, ", token.to_string().bright_white()),
+                        Token::Numbers(_) => print!("{}, ", token.to_string().purple()),
+                        Token::Reserved(_) => print!("{}, ", token.to_string().bright_yellow()),
+                        Token::Symbols(_) => print!("{}, ", token.to_string().bright_blue()),
+                        Token::StringLitral(_) => print!("{}, ", token.to_string().purple()),
                     }
                 }
             }
