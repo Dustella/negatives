@@ -1,5 +1,6 @@
 use super::table::DfaState as state;
 
+#[warn(clippy::single_match)]
 pub fn get_token(current_state: &mut state, current_char: char) {
     match current_state {
         state::Start => match current_char {
@@ -34,12 +35,12 @@ pub fn get_token(current_state: &mut state, current_char: char) {
             '=' => *current_state = state::DoubleSymbolNow,
             _ => *current_state = state::Start,
         },
-        state::SingleSymbolTerminalNow => *current_state = state::Start,
-        state::StringEndNow => *current_state = state::Start,
         state::StringStartNow => match current_char {
             '"' => *current_state = state::StringEndNow,
             _ => {}
         },
+        state::SingleSymbolTerminalNow => *current_state = state::Start,
+        state::StringEndNow => *current_state = state::Start,
         state::ErrFirst => *current_state = state::ErrAlready,
         state::DoubleSymbolNow => *current_state = state::Start,
         state::ErrAlready => {}
