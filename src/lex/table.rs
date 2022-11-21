@@ -7,7 +7,7 @@ pub fn is_reversed(para: String) -> bool {
     RESERVED.iter().any(|e| e.to_string() == para)
 }
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub enum DfaState {
     Start,
     LetterNow,
@@ -19,7 +19,7 @@ pub enum DfaState {
     DoubleSymbolNow,
     StringStartNow,
     StringEndNow,
-    ErrFirst,
+    ErrFirst(ErrType),
     ErrAlready,
 }
 #[derive(Clone, Debug)]
@@ -30,6 +30,12 @@ pub enum Token {
     Symbols(String),
     StringLitral(String),
     BooleanLitral(String),
+}
+#[derive(Clone, Copy)]
+pub enum ErrType {
+    UnexpectedChar,
+    ExpectNumber,
+    ExpectStringEnd,
 }
 
 impl fmt::Display for Token {

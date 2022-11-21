@@ -2,12 +2,13 @@ use self::tokenize::gen_token;
 use crate::lex::{dfa::get_token, table::DfaState as state, table::Token};
 use colored::*;
 
-pub fn tokenize(pre_processed: Vec<String>) -> Vec<Result<Vec<Token>, String>> {
+pub fn tokenize(pre_processed: Vec<String>) -> Vec<Result<Vec<Token>, (usize, String)>> {
     let mut result_tokens = Vec::new();
     for line in pre_processed {
         let mut token_in_this_line: Vec<Token> = Vec::new();
         let mut buffer = String::from("");
         let mut current_state = state::Start;
+        let mut err_msg = String::new();
         let mut has_err_this_line = 0;
 
         let line = line.trim_start();
@@ -26,11 +27,18 @@ pub fn tokenize(pre_processed: Vec<String>) -> Vec<Result<Vec<Token>, String>> {
                 buffer.clear();
             }
 
-            if let state::ErrFirst = current_state {
+            if let state::ErrFirst(ii) = current_state {
                 has_err_this_line = index + 1;
+
+                err_msg = match ii {
+                    table::ErrType::UnexpectedChar => "Unexpected char, found ".to_string(),
+                    table::ErrType::ExpectStringEnd => "Expected string end, found".to_string(),
+                    table::ErrType::ExpectNumber => "Expected number, found".to_string(),
+                };
+                err_msg.push(current_char);
                 // break;
             }
-            match (current_state, current_char) {
+            match (&current_state, current_char) {
                 (state::StringStartNow, ' ') => buffer.push(' '),
                 (_, ' ') => {}
                 (_, _) => buffer.push(current_char),
@@ -39,22 +47,24 @@ pub fn tokenize(pre_processed: Vec<String>) -> Vec<Result<Vec<Token>, String>> {
         if has_err_this_line == 0 {
             result_tokens.push(Ok(token_in_this_line));
         } else {
-            result_tokens.push(Err(has_err_this_line.to_string()))
+            result_tokens.push(Err((has_err_this_line, err_msg)))
         }
     }
     result_tokens
 }
 
-pub fn show_tokens(tokens: Vec<Result<Vec<Token>, String>>) {
+pub fn show_tokens(tokens: Vec<Result<Vec<Token>, (usize, String)>>, source: Vec<String>) {
     for (index, line) in tokens.iter().enumerate() {
-        print!("line{}: ", index + 1);
+        println!("line{}: {}", index + 1, source[index].trim());
         match line {
-            Err(index) => {
-                print!(
+            Err((index, err_type)) => {
+                println!("Error:{}^", "-".repeat(*index));
+                println!(
                     "{} {}",
                     "Err at this line, postion".bright_red(),
-                    (*index).bright_red()
-                )
+                    (*index).to_string().bright_red()
+                );
+                println!("{}", (*err_type).bright_red());
             }
             _ => {
                 for token in line.as_ref().unwrap() {
@@ -69,7 +79,8 @@ pub fn show_tokens(tokens: Vec<Result<Vec<Token>, String>>) {
                 }
             }
         }
-        println!()
+        println!();
+        println!();
     }
 }
 
