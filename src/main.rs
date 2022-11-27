@@ -20,7 +20,7 @@ fn main() {
             new_tokens.push(j);
         }
     }
-    parser::parse(new_tokens);
+    parser::parse(new_tokens).unwrap();
 }
 
 mod lex;

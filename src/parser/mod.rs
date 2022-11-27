@@ -4,7 +4,7 @@ use dfa::*;
 mod ast;
 use ast::*;
 
-pub fn parse(tokens: Vec<Token>) {
+pub fn parse(tokens: Vec<Token>) -> Result<(), ()> {
     let mut tokens = tokens.clone();
     tokens.push(Token::Symbols("$".to_string()));
     let mut inp = tokens.iter();
@@ -15,9 +15,9 @@ pub fn parse(tokens: Vec<Token>) {
     let mut node = Node::new(WState::Prog);
 
     while !stack.is_empty() {
-        // println!("============");
-        // dbg!(&stack);
-        // dbg!(this_char);
+        println!("============");
+        println!("{:?}", &stack);
+        println!("{:?}{}", inp, this_char);
         if let WState::Terminal(cha) = stack.last().unwrap() {
             if cha == this_char
                 || (matches!(cha, Token::Identifier(_))
@@ -25,6 +25,8 @@ pub fn parse(tokens: Vec<Token>) {
             {
                 stack.pop();
                 this_char = inp.next().unwrap();
+            } else {
+                return Err(());
             }
         } else {
             let new_state = trans(stack.last().unwrap(), this_char.clone()).unwrap();
@@ -40,6 +42,7 @@ pub fn parse(tokens: Vec<Token>) {
         }
     }
     node.print(0);
+    Ok(())
     // node.print(0);
 }
 

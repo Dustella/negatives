@@ -59,6 +59,12 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                         WState::Term,
                         WState::Expr,
                     ])
+                } else if sym == "-" {
+                    Ok(vec![
+                        WState::Terminal(Token::Symbols("-".to_string())),
+                        WState::Term,
+                        WState::Expr,
+                    ])
                 } else if sym == ")" || sym == "$" || sym == ";" {
                     Ok(vec![WState::Empty])
                 } else {
@@ -73,6 +79,18 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                 if sym == "*" {
                     Ok(vec![
                         WState::Terminal(Token::Symbols("*".to_string())),
+                        WState::Factor,
+                        WState::Termt,
+                    ])
+                } else if sym == "/" {
+                    Ok(vec![
+                        WState::Terminal(Token::Symbols("/".to_string())),
+                        WState::Factor,
+                        WState::Termt,
+                    ])
+                } else if sym == "==" {
+                    Ok(vec![
+                        WState::Terminal(Token::Symbols("==".to_string())),
                         WState::Factor,
                         WState::Termt,
                     ])
