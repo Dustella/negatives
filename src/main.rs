@@ -15,4 +15,5 @@ fn main() {
 }
 
 mod lex;
+mod parser;
 mod pre;

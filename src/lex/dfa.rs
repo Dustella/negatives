@@ -21,6 +21,7 @@ pub fn get_token(current_state: &mut state, current_char: char) {
         state::WholePartNow => match current_char {
             '0'..='9' => { /*do nothing */ }
             '.' => *current_state = state::DotNow,
+            'a'..='z' | 'A'..='Z' | '_' => *current_state = state::ErrFirst(ErrType::ExpectNumber),
             _ => *current_state = state::Start,
         },
         state::DotNow => match current_char {
@@ -29,6 +30,7 @@ pub fn get_token(current_state: &mut state, current_char: char) {
         },
         state::FractionalPart => match current_char {
             '0'..='9' => { /*do nothing */ }
+            'a'..='z' | 'A'..='Z' | '_' => *current_state = state::ErrFirst(ErrType::ExpectNumber),
             _ => *current_state = state::Start,
         },
         state::SingleSymbolNow => match current_char {

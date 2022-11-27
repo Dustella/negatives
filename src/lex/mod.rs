@@ -1,6 +1,9 @@
 use self::tokenize::gen_token;
-use crate::lex::{dfa::get_token, table::DfaState as state, table::Token};
+use crate::lex::{dfa::get_token, table::DfaState as state};
 use colored::*;
+
+// expose state to public
+pub use crate::lex::table::Token;
 
 pub fn tokenize(pre_processed: Vec<String>) -> Vec<Result<Vec<Token>, (usize, String)>> {
     let mut result_tokens = Vec::new();
@@ -31,11 +34,16 @@ pub fn tokenize(pre_processed: Vec<String>) -> Vec<Result<Vec<Token>, (usize, St
                 has_err_this_line = index + 1;
 
                 err_msg = match ii {
-                    table::ErrType::UnexpectedChar => "Unexpected char, found ".to_string(),
-                    table::ErrType::ExpectStringEnd => "Expected string end, found".to_string(),
-                    table::ErrType::ExpectNumber => "Expected number, found".to_string(),
+                    table::ErrType::UnexpectedChar => "Unexpected char, found '".to_string(),
+                    table::ErrType::ExpectStringEnd => "Expected string end, found '".to_string(),
+                    table::ErrType::ExpectNumber => "Expected number, found '".to_string(),
                 };
-                err_msg.push(current_char);
+                if current_char == '\n' {
+                    err_msg.push_str("\\n");
+                } else {
+                    err_msg.push(current_char);
+                }
+                err_msg.push_str("'");
                 // break;
             }
             match (&current_state, current_char) {
