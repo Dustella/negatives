@@ -1,6 +1,8 @@
 mod dfa;
 mod states;
 use dfa::*;
+mod ast;
+use ast::*;
 
 pub fn parse(tokens: Vec<Token>) {
     let mut tokens = tokens.clone();
@@ -10,7 +12,7 @@ pub fn parse(tokens: Vec<Token>) {
     let mut stack = vec![WState::Prog];
     let mut this_char = inp.next().unwrap();
 
-    // let mut node = Node::new(WState::Prog);
+    let mut node = Node::new(WState::Prog);
 
     while !stack.is_empty() {
         println!("============");
@@ -25,7 +27,7 @@ pub fn parse(tokens: Vec<Token>) {
             let new_state = trans(stack.last().unwrap(), this_char.clone()).unwrap();
             stack.pop();
             let first_1 = new_state.first().unwrap().clone();
-            // node.push(&new_state);
+            node.push(&new_state);
             if let WState::Empty = first_1 {
             } else {
                 for i in new_state.iter().rev() {
@@ -34,6 +36,7 @@ pub fn parse(tokens: Vec<Token>) {
             }
         }
     }
+    node.print(0);
     // node.print(0);
 }
 

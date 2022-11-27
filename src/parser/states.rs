@@ -17,7 +17,7 @@ pub enum WState {
     Empty,
 }
 impl WState {
-    pub fn is_terminal(self) -> bool {
+    pub fn is_terminal(&self) -> bool {
         let mut res = false;
         if let WState::Terminal(_) = self {
             res = true
