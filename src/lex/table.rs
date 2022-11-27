@@ -1,6 +1,6 @@
 use std::fmt;
 const RESERVED: [&str; 10] = [
-    "var", "function", "for", "continue", "else", "if", "return", "elif", "while", "break",
+    "let", "function", "for", "continue", "else", "if", "return", "elif", "while", "break",
 ];
 
 pub fn is_reversed(para: String) -> bool {
@@ -22,7 +22,7 @@ pub enum DfaState {
     ErrFirst(ErrType),
     ErrAlready,
 }
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Token {
     Reserved(String),
     Numbers(String),

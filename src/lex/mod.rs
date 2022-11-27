@@ -61,7 +61,7 @@ pub fn tokenize(pre_processed: Vec<String>) -> Vec<Result<Vec<Token>, (usize, St
     result_tokens
 }
 
-pub fn show_tokens(tokens: Vec<Result<Vec<Token>, (usize, String)>>, source: Vec<String>) {
+pub fn show_tokens(tokens: &Vec<Result<Vec<Token>, (usize, String)>>, source: Vec<String>) {
     for (index, line) in tokens.iter().enumerate() {
         println!("line{}: {}", index + 1, source[index].trim());
         match line {

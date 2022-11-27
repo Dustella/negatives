@@ -1,5 +1,6 @@
 use super::super::lex::Token;
 
+#[derive(Debug, Clone)]
 pub enum WState {
     Prog,
     Stmt,

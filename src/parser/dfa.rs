@@ -9,11 +9,13 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
             Token::Symbols(sym) => {
                 if sym == "(" {
                     Ok(vec![WState::Term, WState::Expr])
+                } else if sym == ";" || sym == ")" {
+                    Ok(vec![WState::Empty])
                 } else {
-                    Err("Expected '(', found ".to_string() + &sym)
+                    Err("error".to_string())
                 }
             }
-            Token::Numbers(_) => Ok(vec![WState::Term, WState::Expr]),
+            Token::Numbers(_) | Token::Identifier(_) => Ok(vec![WState::Term, WState::Expre]),
             _ => Err("".to_string()),
         },
         WState::Term => match cha {
@@ -26,7 +28,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                 }
             }
             // 'n' => Ok(vec![WState::Factor, WState::Termt]),
-            Token::Numbers(_) => Ok(vec![WState::Factor, WState::Termt]),
+            Token::Numbers(_) | Token::Identifier(_) => Ok(vec![WState::Factor, WState::Termt]),
             _ => Err("".to_string()),
         },
         WState::Factor => match cha {
@@ -47,7 +49,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                 }
             }
             // 'n' => Ok(vec![WState::Terminal(Token:: 'n')]),
-            Token::Numbers(_) => Ok(vec![WState::Terminal(cha)]),
+            Token::Numbers(_) | Token::Identifier(_) => Ok(vec![WState::Terminal(cha)]),
             _ => Err("".to_string()),
         },
         WState::Expre => match cha {
@@ -59,7 +61,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                         WState::Term,
                         WState::Expr,
                     ])
-                } else if sym == ")" || sym == "$" {
+                } else if sym == ")" || sym == "$" || sym == ";" {
                     Ok(vec![WState::Empty])
                 } else {
                     Err("Expected '+', found ".to_string() + &sym)
@@ -76,7 +78,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                         WState::Factor,
                         WState::Termt,
                     ])
-                } else if sym == "+" || sym == ")" || sym == "$" {
+                } else if sym == "+" || sym == ")" || sym == "$" || sym == ";" {
                     Ok(vec![WState::Empty])
                 } else {
                     Err("Expected '*', found ".to_string() + &sym)
@@ -90,7 +92,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
             Token::Reserved(sym) => {
                 if sym == "if" {
                     Ok(vec![
-                        WState::Terminal(Token::Symbols("if".to_string())),
+                        WState::Terminal(Token::Reserved("if".to_string())),
                         WState::Terminal(Token::Symbols("(".to_string())),
                         WState::Expr,
                         WState::Terminal(Token::Symbols(")".to_string())),
@@ -109,7 +111,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
             Token::Reserved(sym) => {
                 if sym == "while" {
                     Ok(vec![
-                        WState::Terminal(Token::Symbols("while".to_string())),
+                        WState::Terminal(Token::Reserved("while".to_string())),
                         WState::Terminal(Token::Symbols("(".to_string())),
                         WState::Expr,
                         WState::Terminal(Token::Symbols(")".to_string())),
@@ -127,8 +129,8 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
             Token::Reserved(sym) => {
                 if sym == "let" {
                     Ok(vec![
-                        WState::Terminal(Token::Symbols("let".to_string())),
-                        WState::Terminal(Token::Symbols("x".to_string())),
+                        WState::Terminal(Token::Reserved("let".to_string())),
+                        WState::Terminal(Token::Identifier("x".to_string())),
                         WState::Terminal(Token::Symbols("=".to_string())),
                         WState::Expr,
                         WState::Terminal(Token::Symbols(";".to_string())),
@@ -139,22 +141,12 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
             }
             _ => Err("".to_string()),
         },
-        WState::NewAssignStmt => match cha {
-            Token::Reserved(sym) => {
-                if sym == "let" {
-                    Ok(vec![
-                        WState::Terminal(Token::Symbols("let".to_string())),
-                        WState::Terminal(Token::Symbols("x".to_string())),
-                        WState::Terminal(Token::Symbols("=".to_string())),
-                        WState::Expr,
-                        WState::Terminal(Token::Symbols(";".to_string())),
-                    ])
-                } else {
-                    Err("Expected 'let', found ".to_string() + &sym)
-                }
-            }
-            _ => Err("".to_string()),
-        },
+        WState::NewAssignStmt => Ok(vec![
+            WState::Terminal(Token::Identifier("x".to_string())),
+            WState::Terminal(Token::Symbols("=".to_string())),
+            WState::Expr,
+            WState::Terminal(Token::Symbols(";".to_string())),
+        ]),
         WState::Stmt => match cha {
             Token::Reserved(sym) => {
                 if sym == "if" {
@@ -168,12 +160,13 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                 }
             }
             Token::Symbols(sym) => {
-                if sym == "}" {
+                if sym == "}" || sym == "$" {
                     Ok(vec![WState::Empty])
                 } else {
                     Err("Expected '}', found ".to_string() + &sym)
                 }
             }
+            Token::Identifier(_) => Ok(vec![WState::NewAssignStmt, WState::Stmt]),
             _ => Err("".to_string()),
         },
         WState::Prog => match cha {
@@ -189,7 +182,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                 }
             }
             Token::Symbols(sym) => {
-                if sym == "}" {
+                if sym == "}" || sym == "$" {
                     Ok(vec![WState::Empty])
                 } else {
                     Err("Expected '}', found ".to_string() + &sym)

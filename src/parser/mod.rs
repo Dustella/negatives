@@ -1,49 +1,42 @@
 mod dfa;
 mod states;
-#![recursion_limit = "25565"]
-fn main() {
-    let mut raw = String::from("");
-    let stdin = std::io::stdin();
-    stdin.read_line(&mut raw).unwrap();
-    let mut tmp: String = raw.chars().collect();
-    tmp = tmp.replace('\n', "");
-    tmp = tmp.replace('\r', "");
-    tmp.push('$');
-    let mut inp = tmp.chars();
+use dfa::*;
 
-    let mut stack = vec![table::State::E];
+pub fn parse(tokens: Vec<Token>) {
+    let mut tokens = tokens.clone();
+    tokens.push(Token::Symbols("$".to_string()));
+    let mut inp = tokens.iter();
+
+    let mut stack = vec![WState::Prog];
     let mut this_char = inp.next().unwrap();
 
-    let mut node = Node::new(State::E);
+    // let mut node = Node::new(WState::Prog);
 
     while !stack.is_empty() {
         println!("============");
         dbg!(&stack);
         dbg!(this_char);
-        if let State::Terminal(cha) = stack.last().unwrap() {
-            if *cha == this_char {
+        if let WState::Terminal(cha) = stack.last().unwrap() {
+            if cha == this_char {
                 stack.pop();
                 this_char = inp.next().unwrap();
             }
         } else {
-            let new_state = trans(stack.last().unwrap(), this_char).unwrap();
+            let new_state = trans(stack.last().unwrap(), this_char.clone()).unwrap();
             stack.pop();
             let first_1 = new_state.first().unwrap().clone();
-            node.push(&new_state);
-            if let State::Eps = first_1 {
+            // node.push(&new_state);
+            if let WState::Empty = first_1 {
             } else {
                 for i in new_state.iter().rev() {
-                    stack.push(*i);
+                    stack.push(i.clone());
                 }
             }
         }
     }
-    node.print(0);
+    // node.print(0);
 }
-mod trans;
 
-use table::State;
-use trans::*;
-mod ast;
-mod table;
-use ast::*;
+use crate::lex::Token;
+
+use self::states::WState;
