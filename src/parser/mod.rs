@@ -15,11 +15,14 @@ pub fn parse(tokens: Vec<Token>) {
     let mut node = Node::new(WState::Prog);
 
     while !stack.is_empty() {
-        println!("============");
-        dbg!(&stack);
-        dbg!(this_char);
+        // println!("============");
+        // dbg!(&stack);
+        // dbg!(this_char);
         if let WState::Terminal(cha) = stack.last().unwrap() {
-            if cha == this_char {
+            if cha == this_char
+                || (matches!(cha, Token::Identifier(_))
+                    && matches!(this_char, Token::Identifier(_)))
+            {
                 stack.pop();
                 this_char = inp.next().unwrap();
             }

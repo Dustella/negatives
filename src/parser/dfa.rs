@@ -1,5 +1,3 @@
-use std::f32::consts::E;
-
 use super::super::lex::Token;
 use super::states::WState;
 
@@ -130,7 +128,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                 if sym == "let" {
                     Ok(vec![
                         WState::Terminal(Token::Reserved("let".to_string())),
-                        WState::Terminal(Token::Identifier("x".to_string())),
+                        WState::Terminal(Token::Identifier("_".to_string())),
                         WState::Terminal(Token::Symbols("=".to_string())),
                         WState::Expr,
                         WState::Terminal(Token::Symbols(";".to_string())),
