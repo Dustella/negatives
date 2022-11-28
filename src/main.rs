@@ -2,16 +2,22 @@ use std::env;
 use std::fs;
 
 use lex::show_tokens;
-use lex::Token;
+// use lex::Token;
 
 use crate::lex::tokenize;
 
 fn main() {
+    // get file path from args
     let args: Vec<String> = env::args().collect();
     let file_path = &args[1];
+
+    // get content from file
     let content = fs::read_to_string(file_path).expect("err reading file");
+    // pre process the file
     let processed = pre::pre_process(content);
+    // get tokens
     let tokens = tokenize(processed.clone());
+    // debug: print tokens
     show_tokens(&tokens, processed);
     // flaten the tokens vec
     let mut new_tokens = vec![];
@@ -20,6 +26,7 @@ fn main() {
             new_tokens.push(j);
         }
     }
+    // do parse
     parser::parse(new_tokens).unwrap();
 }
 

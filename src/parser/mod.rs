@@ -15,8 +15,10 @@ pub fn parse(tokens: Vec<Token>) -> Result<(), ()> {
     let mut node = Node::new(WState::Prog);
 
     while !stack.is_empty() {
-        println!("============");
+        println!("=============================");
+        println!("栈中：");
         println!("{:?}", &stack);
+        println!("剩余的字符串：");
         println!("{:?}{}", inp, this_char);
         if let WState::Terminal(cha) = stack.last().unwrap() {
             if cha == this_char
@@ -30,9 +32,11 @@ pub fn parse(tokens: Vec<Token>) -> Result<(), ()> {
             }
         } else {
             let new_state = trans(stack.last().unwrap(), this_char.clone()).unwrap();
-            stack.pop();
+            let old = stack.pop().unwrap();
             let first_1 = new_state.first().unwrap().clone();
             node.push(&new_state);
+            println!("新的产生式:");
+            println!("{:?} -> {:?}", old, new_state);
             if let WState::Empty = first_1 {
             } else {
                 for i in new_state.iter().rev() {

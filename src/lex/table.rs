@@ -28,8 +28,8 @@ pub enum Token {
     Numbers(String),
     Identifier(String),
     Symbols(String),
-    StringLitral(String),
-    BooleanLitral(String),
+    Litral(String),
+    Boolean(String),
 }
 #[derive(Clone, Copy)]
 pub enum ErrType {

@@ -9,7 +9,7 @@ pub fn gen_token(origin_state: state, buffer: String) -> Option<Token> {
             if is_reversed(buffer.clone()) {
                 Some(Token::Reserved(buffer.clone()))
             } else if buffer.clone().contains("false") || buffer.clone().contains("true") {
-                Some(Token::BooleanLitral(buffer.clone()))
+                Some(Token::Boolean(buffer.clone()))
             } else {
                 Some(Token::Identifier(buffer.clone()))
             }
@@ -17,9 +17,7 @@ pub fn gen_token(origin_state: state, buffer: String) -> Option<Token> {
         state::DoubleSymbolNow | state::SingleSymbolNow | state::SingleSymbolTerminalNow => {
             Some(Token::Symbols(buffer.clone()))
         }
-        state::StringEndNow => Some(Token::StringLitral(
-            buffer.clone().trim_matches('\"').to_string(),
-        )),
+        state::StringEndNow => Some(Token::Litral(buffer.clone().trim_matches('\"').to_string())),
         _ => None,
     }
 }
