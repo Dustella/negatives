@@ -7,7 +7,7 @@ pub fn is_reversed(para: String) -> bool {
     RESERVED.iter().any(|e| e.to_string() == para)
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum DfaState {
     Start,
     LetterNow,
@@ -27,11 +27,11 @@ pub enum Token {
     Reserved(String),
     Numbers(String),
     Identifier(String),
-    Symbols(String),
+    Punctuator(String),
     Litral(String),
     Boolean(String),
 }
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum ErrType {
     UnexpectedChar,
     ExpectNumber,
@@ -40,6 +40,27 @@ pub enum ErrType {
 
 impl fmt::Display for Token {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{:?}, ", self)
+    }
+}
+
+impl fmt::Display for ErrType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}, found", self)
+    }
+}
+
+impl DfaState {
+    pub fn is_start(&self) -> bool {
+        match self {
+            DfaState::Start => true,
+            _ => false,
+        }
+    }
+    pub fn is_err_first(&self) -> bool {
+        match self {
+            DfaState::ErrFirst(_) => true,
+            _ => false,
+        }
     }
 }

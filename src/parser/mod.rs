@@ -6,7 +6,7 @@ use ast::*;
 
 pub fn parse(tokens: Vec<Token>) -> Result<(), ()> {
     let mut tokens = tokens.clone();
-    tokens.push(Token::Symbols("$".to_string()));
+    tokens.push(Token::Punctuator("$".to_string()));
     let mut inp = tokens.iter();
 
     let mut stack = vec![WState::Prog];
