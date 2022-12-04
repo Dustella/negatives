@@ -21,6 +21,9 @@ pub enum DfaState {
     StringEndNow,
     ErrFirst(ErrType),
     ErrAlready,
+    CommentNow,
+    CommentEnd,
+    SingleComment,
 }
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
@@ -60,6 +63,14 @@ impl DfaState {
     pub fn is_err_first(&self) -> bool {
         match self {
             DfaState::ErrFirst(_) => true,
+            _ => false,
+        }
+    }
+    pub fn is_comment(&self) -> bool {
+        match &self {
+            DfaState::CommentNow => true,
+            DfaState::CommentEnd => true,
+            DfaState::SingleComment => true,
             _ => false,
         }
     }

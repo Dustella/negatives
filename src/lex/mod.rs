@@ -66,7 +66,7 @@ impl Tokenizer {
         }
         dfa_transform(&mut self.current_state, current_char);
         buffer.push(current_char);
-        while !(self.current_state.is_start() && !current_char.is_whitespace())
+        while !(self.current_state.is_start() && !last_state.is_comment() && !last_state.is_start())
             && !self.current_state.is_err_first()
         {
             last_state = self.current_state.clone();
@@ -93,7 +93,12 @@ impl Tokenizer {
                 self.move_next();
                 return err;
             }
+            if self.current_state.is_comment() {
+                buffer.clear();
+            } // println!("{:?}:{:?} {}", last_state, self.current_state, buffer);
         }
+        // debug
+
         let res = gen_token(last_state, buffer);
         Ok(res.unwrap())
     }

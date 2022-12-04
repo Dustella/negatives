@@ -35,6 +35,8 @@ pub fn dfa_transform(current_state: &mut state, current_char: char) {
         },
         state::SingleSymbolNow => match current_char {
             '=' => *current_state = state::DoubleSymbolNow,
+            '*' => *current_state = state::CommentNow,
+            '/' => *current_state = state::SingleComment,
             _ => *current_state = state::Start,
         },
         state::StringStartNow => match current_char {
@@ -47,5 +49,17 @@ pub fn dfa_transform(current_state: &mut state, current_char: char) {
         state::ErrFirst(_) => *current_state = state::ErrAlready,
         state::DoubleSymbolNow => *current_state = state::Start,
         state::ErrAlready => {}
+        state::CommentNow => match current_char {
+            '*' => *current_state = state::CommentEnd,
+            _ => {}
+        },
+        state::CommentEnd => match current_char {
+            '/' => *current_state = state::Start,
+            _ => *current_state = state::CommentNow,
+        },
+        state::SingleComment => match current_char {
+            '\n' => *current_state = state::Start,
+            _ => {}
+        },
     }
 }
