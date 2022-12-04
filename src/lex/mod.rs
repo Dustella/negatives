@@ -1,4 +1,3 @@
-use std::hash::BuildHasherDefault;
 mod inspector;
 use self::{gen_token::gen_token, table::ErrType};
 pub use crate::lex::inspector::*;
@@ -13,6 +12,7 @@ pub struct Tokenizer {
     current_location_inline: usize,
     index: usize,
     source: String,
+    pub finished: bool,
 }
 
 impl Tokenizer {
@@ -23,6 +23,7 @@ impl Tokenizer {
             current_location_inline: 0,
             index: 0,
             source,
+            finished: false,
         }
     }
     pub fn get_current_line(&self) -> String {
@@ -32,6 +33,7 @@ impl Tokenizer {
             .unwrap()
             .to_string()
     }
+
     pub fn get_last_char(&self) -> char {
         self.source.chars().nth(self.index - 1).unwrap()
     }
@@ -50,6 +52,7 @@ impl Tokenizer {
         let maybe_current_char = self.source.chars().nth(self.index);
         //  if current char is none, then it is the end of the file
         if maybe_current_char.is_none() {
+            self.finished = true;
             return None;
         }
         let mut current_char = maybe_current_char.unwrap();
@@ -57,6 +60,7 @@ impl Tokenizer {
             self.move_next();
             let maybe_current_char = self.source.chars().nth(self.index);
             if maybe_current_char.is_none() {
+                self.finished = true;
                 return None;
             }
             current_char = maybe_current_char.unwrap();
@@ -71,6 +75,7 @@ impl Tokenizer {
             let maybe_current_char = self.source.chars().nth(self.index);
             //  if current char is none, then it is the end of the file
             if maybe_current_char.is_none() {
+                self.finished = true;
                 break;
             }
             let current_char = maybe_current_char.unwrap();

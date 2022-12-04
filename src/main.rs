@@ -15,7 +15,7 @@ fn main() {
     let content = fs::read_to_string(file_path).expect("err reading file");
     // get tokens
     let mut tokenizer = Tokenizer::new(content);
-    inspect(&mut tokenizer);
+    // inspect(&mut tokenizer);
     // debug: print tokens
     // show_tokens(&tokens, processed);
     // flaten the tokens vec
@@ -26,7 +26,7 @@ fn main() {
     //     }
     // }
     // // do parse
-    // parser::parse(new_tokens).unwrap();
+    parser::parse(&mut tokenizer).unwrap();
 }
 
 mod lex;

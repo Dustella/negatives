@@ -3,7 +3,13 @@ use colored::*;
 
 // test: this will inspect the next token and print it for debug
 pub fn inspect(tokenizer: &mut Tokenizer) {
+    println!(
+        "line {}: {}",
+        tokenizer.current_line + 1,
+        tokenizer.get_current_line().trim()
+    );
     let mut current_line = tokenizer.current_line.clone();
+
     while let Some(token) = tokenizer.get_next_token() {
         if current_line != tokenizer.current_line {
             println!();
@@ -17,12 +23,12 @@ pub fn inspect(tokenizer: &mut Tokenizer) {
         let token = token;
         if let Ok(token) = token {
             match token {
-                Token::Boolean(_) => print!("{}, ", token.to_string().green()),
-                Token::Identifier(_) => print!("{}, ", token.to_string().bright_white()),
-                Token::Numbers(_) => print!("{}, ", token.to_string().purple()),
-                Token::Reserved(_) => print!("{}, ", token.to_string().bright_yellow()),
-                Token::Punctuator(_) => print!("{}, ", token.to_string().bright_blue()),
-                Token::Litral(_) => print!("{}, ", token.to_string().purple()),
+                Token::Boolean(_) => print!("{}", token.to_string().green()),
+                Token::Identifier(_) => print!("{}", token.to_string().bright_white()),
+                Token::Numbers(_) => print!("{}", token.to_string().purple()),
+                Token::Reserved(_) => print!("{}", token.to_string().bright_yellow()),
+                Token::Punctuator(_) => print!("{}", token.to_string().bright_blue()),
+                Token::Litral(_) => print!("{}", token.to_string().purple()),
             }
         } else {
             let token = token.err().unwrap();
