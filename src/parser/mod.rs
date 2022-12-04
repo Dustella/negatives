@@ -4,29 +4,25 @@ use dfa::*;
 mod ast;
 use ast::*;
 
-pub fn parse(tokens: Vec<Token>) -> Result<(), ()> {
-    let mut tokens = tokens.clone();
-    tokens.push(Token::Symbols("$".to_string()));
-    let mut inp = tokens.iter();
-
+pub fn parse(tokenizer: &mut Tokenizer) -> Result<(), ()> {
     let mut stack = vec![WState::Prog];
-    let mut this_char = inp.next().unwrap();
 
     let mut node = Node::new(WState::Prog);
+    let mut this_char = tokenizer.get_next_token().unwrap().unwrap();
 
-    while !stack.is_empty() {
+    while tokenizer.finished == false {
         println!("=============================");
         println!("栈中：");
         println!("{:?}", &stack);
         println!("剩余的字符串：");
-        println!("{:?}{}", inp, this_char);
+        println!("{:?}", this_char);
         if let WState::Terminal(cha) = stack.last().unwrap() {
-            if cha == this_char
+            if *cha == this_char
                 || (matches!(cha, Token::Identifier(_))
                     && matches!(this_char, Token::Identifier(_)))
             {
                 stack.pop();
-                this_char = inp.next().unwrap();
+                this_char = tokenizer.get_next_token().unwrap().unwrap();
             } else {
                 return Err(());
             }
@@ -50,6 +46,6 @@ pub fn parse(tokens: Vec<Token>) -> Result<(), ()> {
     // node.print(0);
 }
 
-use crate::lex::Token;
+use crate::lex::{Token, Tokenizer};
 
 use self::states::WState;

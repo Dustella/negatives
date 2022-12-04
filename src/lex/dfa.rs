@@ -1,7 +1,7 @@
 use super::table::{DfaState as state, ErrType};
 
 #[warn(clippy::single_match)]
-pub fn get_token(current_state: &mut state, current_char: char) {
+pub fn dfa_transform(current_state: &mut state, current_char: char) {
     match current_state {
         state::Start => match current_char {
             'a'..='z' | 'A'..='Z' | '_' => *current_state = state::LetterNow,
