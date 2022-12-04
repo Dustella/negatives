@@ -7,30 +7,30 @@ use ast::*;
 pub fn parse(tokenizer: &mut Tokenizer) -> Result<(), ()> {
     let mut stack = vec![WState::Prog];
 
-    let mut node = Node::new(WState::Prog);
-    let mut this_char = tokenizer.get_next_token().unwrap().unwrap();
+    let mut ast = Node::new(WState::Prog);
+    let mut current_token = tokenizer.get_next_token().unwrap();
 
-    while tokenizer.finished == false {
+    while !stack.is_empty() {
         println!("=============================");
         println!("栈中：");
         println!("{:?}", &stack);
         println!("剩余的字符串：");
-        println!("{:?}", this_char);
+        println!("{:?}", current_token);
         if let WState::Terminal(cha) = stack.last().unwrap() {
-            if *cha == this_char
+            if *cha == current_token
                 || (matches!(cha, Token::Identifier(_))
-                    && matches!(this_char, Token::Identifier(_)))
+                    && matches!(current_token, Token::Identifier(_)))
             {
                 stack.pop();
-                this_char = tokenizer.get_next_token().unwrap().unwrap();
+                current_token = tokenizer.get_next_token().unwrap();
             } else {
                 return Err(());
             }
         } else {
-            let new_state = trans(stack.last().unwrap(), this_char.clone()).unwrap();
+            let new_state = trans(stack.last().unwrap(), current_token.clone()).unwrap();
             let old = stack.pop().unwrap();
             let first_1 = new_state.first().unwrap().clone();
-            node.push(&new_state);
+            ast.push(&new_state);
             println!("新的产生式:");
             println!("{:?} -> {:?}", old, new_state);
             if let WState::Empty = first_1 {
@@ -41,7 +41,7 @@ pub fn parse(tokenizer: &mut Tokenizer) -> Result<(), ()> {
             }
         }
     }
-    node.print(0);
+    ast.print(0);
     Ok(())
     // node.print(0);
 }

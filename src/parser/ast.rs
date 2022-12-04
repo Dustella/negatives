@@ -54,7 +54,7 @@ impl Node {
         for i in &self.children {
             let las = offset / 4;
             for _ in 0..las + 1 {
-                print!("|---");
+                print!("|-");
             }
             i.clone().borrow().print(offset + 4);
         }

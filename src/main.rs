@@ -1,8 +1,7 @@
+mod lex;
+mod parser;
 use std::env;
 use std::fs;
-
-use lex::show_tokens;
-// use lex::Token;
 
 use crate::lex::*;
 
@@ -16,18 +15,6 @@ fn main() {
     // get tokens
     let mut tokenizer = Tokenizer::new(content);
     // inspect(&mut tokenizer);
-    // debug: print tokens
-    // show_tokens(&tokens, processed);
-    // flaten the tokens vec
-    // let mut new_tokens = vec![];
-    // for i in tokens {
-    //     for j in i.unwrap() {
-    //         new_tokens.push(j);
-    //     }
-    // }
-    // // do parse
+
     parser::parse(&mut tokenizer).unwrap();
 }
-
-mod lex;
-mod parser;

@@ -46,14 +46,14 @@ impl Tokenizer {
         }
     }
 
-    pub fn get_next_token(&mut self) -> Option<Result<Token, (String, usize, ErrType)>> {
+    pub fn get_next_token(&mut self) -> Result<Token, (String, usize, ErrType)> {
         let mut buffer = String::new();
         let mut last_state = state::Start;
         let maybe_current_char = self.source.chars().nth(self.index);
         //  if current char is none, then it is the end of the file
         if maybe_current_char.is_none() {
             self.finished = true;
-            return None;
+            return Ok(Token::Punctuator("$".to_string()));
         }
         let mut current_char = maybe_current_char.unwrap();
         while current_char.is_whitespace() {
@@ -61,7 +61,7 @@ impl Tokenizer {
             let maybe_current_char = self.source.chars().nth(self.index);
             if maybe_current_char.is_none() {
                 self.finished = true;
-                return None;
+                return Ok(Token::Punctuator("$".to_string()));
             }
             current_char = maybe_current_char.unwrap();
         }
@@ -86,11 +86,11 @@ impl Tokenizer {
             }
             if let state::ErrFirst(err_type) = self.current_state {
                 self.current_state = state::Start;
-                let err = Some(Err((
+                let err = Err((
                     self.get_current_line(),
                     self.current_location_inline - 1,
                     err_type,
-                )));
+                ));
                 self.move_next();
                 return err;
             }
@@ -101,7 +101,7 @@ impl Tokenizer {
             // dbg!(&self.current_state);
         }
         let res = gen_token(last_state, buffer);
-        Some(Ok(res.unwrap()))
+        Ok(res.unwrap())
     }
 }
 

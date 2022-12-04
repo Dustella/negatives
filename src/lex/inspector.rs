@@ -10,7 +10,8 @@ pub fn inspect(tokenizer: &mut Tokenizer) {
     );
     let mut current_line = tokenizer.current_line.clone();
 
-    while let Some(token) = tokenizer.get_next_token() {
+    while !tokenizer.finished {
+        let token = tokenizer.get_next_token();
         if current_line != tokenizer.current_line {
             println!();
             println!(
@@ -20,7 +21,6 @@ pub fn inspect(tokenizer: &mut Tokenizer) {
             );
         }
         // println!("{}: {:?}", tokenizer.current_line, token);
-        let token = token;
         if let Ok(token) = token {
             match token {
                 Token::Boolean(_) => print!("{}", token.to_string().green()),
