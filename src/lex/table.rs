@@ -1,10 +1,10 @@
 use std::fmt;
-const RESERVED: [&str; 10] = [
+const KEYWORD: [&str; 10] = [
     "let", "function", "for", "continue", "else", "if", "return", "elif", "while", "break",
 ];
 
 pub fn is_reversed(para: String) -> bool {
-    RESERVED.iter().any(|e| e.to_string() == para)
+    KEYWORD.iter().any(|e| e.to_string() == para)
 }
 
 #[derive(Clone, Debug)]
@@ -27,7 +27,7 @@ pub enum DfaState {
 }
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
-    Reserved(String),
+    Keyword(String),
     Constant(String),
     Identifier(String),
     Operator(String),

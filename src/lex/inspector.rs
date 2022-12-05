@@ -25,7 +25,7 @@ pub fn inspect(tokenizer: &mut Tokenizer) {
             match token {
                 Token::Identifier(_) => print!("{}", token.to_string().bright_white()),
                 Token::Constant(_) => print!("{}", token.to_string().purple()),
-                Token::Reserved(_) => print!("{}", token.to_string().bright_yellow()),
+                Token::Keyword(_) => print!("{}", token.to_string().bright_yellow()),
                 Token::Operator(_) => print!("{}", token.to_string().bright_blue()),
                 Token::StringLiteral(_) => print!("{}", token.to_string().purple()),
             }

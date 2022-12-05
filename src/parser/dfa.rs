@@ -105,10 +105,10 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
         WState::Terminal(_) => Err("expect terminal".to_string()),
         WState::Empty => Err("".to_string()),
         WState::IfStmt => match cha {
-            Token::Reserved(sym) => {
+            Token::Keyword(sym) => {
                 if sym == "if" {
                     Ok(vec![
-                        WState::Terminal(Token::Reserved("if".to_string())),
+                        WState::Terminal(Token::Keyword("if".to_string())),
                         WState::Terminal(Token::Operator("(".to_string())),
                         WState::Expr,
                         WState::Terminal(Token::Operator(")".to_string())),
@@ -124,10 +124,10 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
         },
 
         WState::WhileStmt => match cha {
-            Token::Reserved(sym) => {
+            Token::Keyword(sym) => {
                 if sym == "while" {
                     Ok(vec![
-                        WState::Terminal(Token::Reserved("while".to_string())),
+                        WState::Terminal(Token::Keyword("while".to_string())),
                         WState::Terminal(Token::Operator("(".to_string())),
                         WState::Expr,
                         WState::Terminal(Token::Operator(")".to_string())),
@@ -142,10 +142,10 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
             _ => Err("".to_string()),
         },
         WState::AssignStmt => match cha {
-            Token::Reserved(sym) => {
+            Token::Keyword(sym) => {
                 if sym == "let" {
                     Ok(vec![
-                        WState::Terminal(Token::Reserved("let".to_string())),
+                        WState::Terminal(Token::Keyword("let".to_string())),
                         WState::Terminal(Token::Identifier("_".to_string())),
                         WState::Terminal(Token::Operator("=".to_string())),
                         WState::Expr,
@@ -164,7 +164,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
             WState::Terminal(Token::Operator(";".to_string())),
         ]),
         WState::Stmt => match cha {
-            Token::Reserved(sym) => {
+            Token::Keyword(sym) => {
                 if sym == "if" {
                     Ok(vec![WState::IfStmt, WState::Stmt])
                 } else if sym == "while" {
@@ -186,7 +186,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
             _ => Err("".to_string()),
         },
         WState::Prog => match cha {
-            Token::Reserved(sym) => {
+            Token::Keyword(sym) => {
                 if sym == "if" {
                     Ok(vec![WState::IfStmt, WState::Stmt])
                 } else if sym == "while" {

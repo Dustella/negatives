@@ -6,9 +6,9 @@ pub fn gen_token(origin_state: state, buffer: String) -> Option<Token> {
         state::FractionalPart => Some(Token::Constant(buffer.clone())),
         state::WholePartNow => Some(Token::Constant(buffer.clone())),
         state::LetterNow => {
-            // check if is in reserved
+            // check if is in Keyword
             if is_reversed(buffer.clone()) {
-                Some(Token::Reserved(buffer.clone()))
+                Some(Token::Keyword(buffer.clone()))
             } else {
                 Some(Token::Identifier(buffer.clone()))
             }
