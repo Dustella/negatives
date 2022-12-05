@@ -17,7 +17,11 @@ pub fn gen_token(origin_state: state, buffer: String) -> Option<Token> {
             Some(Token::Operator(buffer.clone()))
         }
         state::StringEndNow => Some(Token::StringLiteral(
-            buffer.clone().trim_matches('\"').to_string(),
+            buffer
+                .clone()
+                .trim_matches('\"')
+                .replace("\\\"", "\"")
+                .to_string(),
         )),
         _ => None,
     }
