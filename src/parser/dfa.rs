@@ -13,6 +13,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                     Err("error".to_string())
                 }
             }
+            Token::StringLiteral(s) => Ok(vec![WState::Terminal(Token::StringLiteral(s))]),
             Token::Constant(_) | Token::Identifier(_) => Ok(vec![WState::Term, WState::Expre]),
             _ => Err("".to_string()),
         },

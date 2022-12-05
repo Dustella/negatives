@@ -18,6 +18,7 @@ pub enum DfaState {
     SingleSymbolNow,
     DoubleSymbolNow,
     StringStartNow,
+    StringEscapeNow,
     StringEndNow,
     ErrFirst(ErrType),
     ErrAlready,

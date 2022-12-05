@@ -41,8 +41,12 @@ pub fn dfa_transform(current_state: &mut state, current_char: char) {
         },
         state::StringStartNow => match current_char {
             '"' => *current_state = state::StringEndNow,
+            '\\' => *current_state = state::StringEscapeNow,
             '\n' => *current_state = state::ErrFirst(ErrType::ExpectStringEnd),
             _ => {}
+        },
+        state::StringEscapeNow => match current_char {
+            _ => *current_state = state::StringStartNow,
         },
         state::SingleSymbolTerminalNow => *current_state = state::Start,
         state::StringEndNow => *current_state = state::Start,
