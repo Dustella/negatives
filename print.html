@@ -76,7 +76,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="Intro.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="Lex.html"><strong aria-hidden="true">2.</strong> Lex</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="lex/intro.html"><strong aria-hidden="true">2.1.</strong> Intro</a></li><li class="chapter-item expanded "><a href="lex/dfa.html"><strong aria-hidden="true">2.2.</strong> DFA</a></li><li class="chapter-item expanded "><a href="lex/tokenize.html"><strong aria-hidden="true">2.3.</strong> Tokens</a></li><li class="chapter-item expanded "><a href="lex/errs.html"><strong aria-hidden="true">2.4.</strong> Err</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="Intro.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="lexer.html"><strong aria-hidden="true">2.</strong> Lex</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -147,11 +147,75 @@
 <pre><code class="language-bash">cargo build -r
 </code></pre>
 <p>你可以在这里查阅更多关于negative语言的词法和文法规则、实现细节</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="lex"><a class="header" href="#lex">Lex</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="intro"><a class="header" href="#intro">Intro</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="dfa"><a class="header" href="#dfa">DFA</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="tokens"><a class="header" href="#tokens">Tokens</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="err"><a class="header" href="#err">Err</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="词法分析"><a class="header" href="#词法分析">词法分析</a></h1>
+<h2 id="词法分析做的工作"><a class="header" href="#词法分析做的工作">词法分析做的工作</a></h2>
+<p>我们需要完成的任务是：输入一个字符序列，输出一个词法单元序列。</p>
+<p>我们知道，在编译器中，后续的语法分析中，语法分析会不停读入下一个词法单元、读入下一个词法单元，也就是驱动着词法分析器读入剩余的字符，尝试找到一个合法的词法单元。</p>
+<p>那么我设计了一个类：<code>Tokenizer</code>，因为我们需要有状态地记录当前字符串位置、行数、行内位置来进行友好的报错。这个类暴露一个方法<code>get_next_token</code>，这个方法会尝试读入剩下的字符、尝试给出一个合法的词法单元。如果已经已经读完了文件，方法会返回<code>Token::Operator('$')</code>，（因为我后续使用的语法分析是预测分析法，最后一个词法单元需要补一个<code>$</code>作为文件结尾）</p>
+<p>我们使用字符序列可以实例化一个对象，把这个对象交给语法分析的部分。</p>
+<p>这样，我们避免了额外的空间复杂度：我们没有也不必要在语法分析之前完整地在内存中存下所有词法单元，我们应该让语法分析驱动词法分析。</p>
+<p>同时，这个良好的设计使得最后我们只读了一趟源程序，所有分析可以完全在一趟之内完成。</p>
+<h2 id="词法单元种类"><a class="header" href="#词法单元种类">词法单元种类</a></h2>
+<pre><code class="language-text">token:
+    keyword
+    identifier
+    constant
+    operator
+    string-literal
+</code></pre>
+<h3 id="keyword"><a class="header" href="#keyword">keyword</a></h3>
+<p>negative具有以下关键字</p>
+<p><code>let</code>, <code>function</code>, <code>for</code>, <code>continue</code>, <code>else</code>, <code>if</code>, <code>return</code>, <code>elif</code>, <code>while</code>, <code>break</code>,</p>
+<h3 id="identifer"><a class="header" href="#identifer">identifer</a></h3>
+<p>negative 具有以下标识符</p>
+<pre><code class="language-text">id -&gt; 
+ nondigit 
+ id nondigit 
+ id digit
+
+no-digit -&gt;
+ _ a b c d e f g h i j k l m
+ n o p q r s t u v w x y z
+ A B C D E F G H I J K L M
+ N O P Q R S T U V W X Y Z
+
+digit -&gt; 
+ 0 1 2 3 4 5 6 7 8 9
+</code></pre>
+<h3 id="constants"><a class="header" href="#constants">Constants</a></h3>
+<pre><code class="language-text">constant:
+ integer-constant
+ floating-constant
+
+integer-constant:
+ nonzero-digit
+ integer-constant digit
+
+nonzero-digit: one of
+ 1 2 3 4 5 6 7 8 9
+
+decimal-floating-constant:
+ digit-sequenceopt . digit-sequence
+
+digit-sequenceopt:
+ nonzero-digit
+
+</code></pre>
+<h3 id="string-literal"><a class="header" href="#string-literal">string-literal</a></h3>
+<pre><code class="language-text">string-literal:
+    &quot; s-char-sequenceopt &quot;
+
+s-char-sequenceopt:
+    【除了单独的\,&quot; 或者换行\n】之外的任何字符
+</code></pre>
+<h3 id="operator"><a class="header" href="#operator">operator</a></h3>
+<pre><code class="language-text">operator: one of
+ [ ] ( ) { } .
+ * + - ~ !
+ / &lt; &gt; &lt;= &gt;= ==
+ : ; 
+  += -= 
+</code></pre>
 
                     </main>
 
