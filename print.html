@@ -135,8 +135,18 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="chapter-1"><a class="header" href="#chapter-1">Chapter 1</a></h1>
-<p>dsa</p>
+                        <h1 id="negative-编译器"><a class="header" href="#negative-编译器">negative 编译器</a></h1>
+<p>本negative编译器实现了简答的词法分析和简答的对于LL（1）文法的语法分析，最后可以调试词法单元流、或者显示AST</p>
+<h2 id="编译和运行"><a class="header" href="#编译和运行">编译和运行</a></h2>
+<p>请确保你有 rust 相关环境和 cargo，</p>
+<p>你需要使用以下指令调试</p>
+<pre><code class="language-bash">cargo run -- poem.txt lex
+</code></pre>
+<p>必须顺序在 <code>--</code> 后传入两个参数。第一个是源程序的相对路径，第二个是工作模式。工作模式可以是<code>lex</code>或者是<code>parse</code></p>
+<p>使用以下指令构建二进制文件</p>
+<pre><code class="language-bash">cargo build -r
+</code></pre>
+<p>你可以在这里查阅更多关于negative语言的词法和文法规则、实现细节</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="lex"><a class="header" href="#lex">Lex</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div>
                     </main>
