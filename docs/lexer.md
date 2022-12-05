@@ -66,10 +66,7 @@ nonzero-digit: one of
  1 2 3 4 5 6 7 8 9
 
 decimal-floating-constant:
- digit-sequenceopt . digit-sequence
-
-digit-sequenceopt:
- nonzero-digit
+ nonzero-digit . nonzero-digit
 
 ```
 
