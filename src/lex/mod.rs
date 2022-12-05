@@ -4,6 +4,7 @@ pub use crate::lex::inspector::*;
 use crate::lex::{dfa::dfa_transform, table::DfaState as state};
 // expose state to public
 pub use crate::lex::table::Token;
+use colored::*;
 
 pub struct Tokenizer {
     current_state: state,
@@ -44,6 +45,18 @@ impl Tokenizer {
             self.current_location_inline = 0;
         }
     }
+    pub fn print_err(&self, err: (String, usize, ErrType)) {
+        println!("{}: {:?}", self.current_line, err);
+        println!(
+            "{}{}:",
+            "Error found at line".red(),
+            self.current_line.to_string().red()
+        );
+        println!("{}", err.0.red());
+        println!("{}^ <-here", "-".repeat(err.1).to_string());
+        print!("{}", err.2.to_string());
+        println!(" '{}'", self.get_last_char().escape_default());
+    }
 
     pub fn get_next_token(&mut self) -> Result<Token, (String, usize, ErrType)> {
         let mut buffer = String::new();
@@ -52,7 +65,7 @@ impl Tokenizer {
         //  if current char is none, then it is the end of the file
         if maybe_current_char.is_none() {
             self.finished = true;
-            return Ok(Token::Punctuator("$".to_string()));
+            return Ok(Token::Operator("$".to_string()));
         }
         let mut current_char = maybe_current_char.unwrap();
         while current_char.is_whitespace() {
@@ -60,7 +73,7 @@ impl Tokenizer {
             let maybe_current_char = self.source.chars().nth(self.index);
             if maybe_current_char.is_none() {
                 self.finished = true;
-                return Ok(Token::Punctuator("$".to_string()));
+                return Ok(Token::Operator("$".to_string()));
             }
             current_char = maybe_current_char.unwrap();
         }
@@ -85,13 +98,14 @@ impl Tokenizer {
             }
             if let state::ErrFirst(err_type) = self.current_state {
                 self.current_state = state::Start;
-                let err = Err((
+                let err = (
                     self.get_current_line(),
                     self.current_location_inline - 1,
                     err_type,
-                ));
+                );
+                self.print_err(err.clone());
                 self.move_next();
-                return err;
+                return Err(err);
             }
             if self.current_state.is_comment() {
                 buffer.clear();

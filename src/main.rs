@@ -15,6 +15,7 @@ fn main() {
     let content = fs::read_to_string(file_path).expect("err reading file");
     // get tokens
     let mut tokenizer = Tokenizer::new(content);
+
     match mode.as_str() {
         "lex" => {
             lex::inspect(&mut tokenizer);
@@ -23,7 +24,7 @@ fn main() {
             parser::parse(&mut tokenizer).unwrap();
         }
         _ => {
-            println!("mode not found");
+            println!("mode not found, mode should be 'lex' or 'parse'");
         }
     }
     // inspect(&mut tokenizer);

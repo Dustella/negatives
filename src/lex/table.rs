@@ -28,11 +28,10 @@ pub enum DfaState {
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
     Reserved(String),
-    Numbers(String),
+    Constant(String),
     Identifier(String),
-    Punctuator(String),
-    Litral(String),
-    Boolean(String),
+    Operator(String),
+    StringLiteral(String),
 }
 #[derive(Clone, Copy, Debug)]
 pub enum ErrType {
