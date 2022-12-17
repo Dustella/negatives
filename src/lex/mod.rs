@@ -44,6 +44,10 @@ impl Tokenizer {
             self.current_line += 1;
             self.current_location_inline = 0;
         }
+        // we have to handle CRLF ending, skip \r
+        if let Some('\r') = self.source.chars().nth(self.index - 1) {
+            self.move_next()
+        }
     }
     pub fn print_err(&self, err: (String, usize, ErrType)) {
         println!("{}: {:?}", self.current_line, err);

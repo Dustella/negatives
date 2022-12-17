@@ -11,7 +11,7 @@ pub fn dfa_transform(current_state: &mut state, current_char: char) {
                 *current_state = state::SingleSymbolNow
             }
             '"' => *current_state = state::StringStartNow,
-            ' ' | '\n' => {}
+            ' ' | '\n' | '\r' => {}
             _ => *current_state = state::ErrFirst(ErrType::UnexpectedChar),
         },
         state::LetterNow => match current_char {
@@ -42,7 +42,7 @@ pub fn dfa_transform(current_state: &mut state, current_char: char) {
         state::StringStartNow => match current_char {
             '"' => *current_state = state::StringEndNow,
             '\\' => *current_state = state::StringEscapeNow,
-            '\n' => *current_state = state::ErrFirst(ErrType::ExpectStringEnd),
+            '\n' | '\r' => *current_state = state::ErrFirst(ErrType::ExpectStringEnd),
             _ => {}
         },
         state::StringEscapeNow => match current_char {
@@ -62,7 +62,7 @@ pub fn dfa_transform(current_state: &mut state, current_char: char) {
             _ => *current_state = state::CommentNow,
         },
         state::SingleComment => match current_char {
-            '\n' => *current_state = state::Start,
+            '\n' | '\r' => *current_state = state::Start,
             _ => {}
         },
     }
