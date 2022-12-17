@@ -18,27 +18,29 @@
 
 ```text
 token:
-    keyword
-    identifier
-    constant
-    operator
-    string-literal
+    keyword // 关键字
+    identifier // 标识符
+    constant // 数值常量
+    operator // 操作符和界符
+    string-literal // 字符串字面量
 ```
 
-### keyword
+### keyword 关键字
 
-negative具有以下关键字
+negative 具有以下关键字
 
 `let`, `function`, `for`, `continue`, `else`, `if`, `return`, `elif`, `while`, `break`,
 
-### identifer
+我们在分析出标识符之后，会判断标识符是否在关键字表中
 
-negative 具有以下标识符
+### identifer 标识符
+
+negative 具有以下标识符语法规则如下。标识符必须以字母开头，之后可以是下划线，数字或者字母
 
 ```text
-id -> 
- nondigit 
- id nondigit 
+id ->
+ nondigit
+ id nondigit
  id digit
 
 no-digit ->
@@ -47,11 +49,13 @@ no-digit ->
  A B C D E F G H I J K L M
  N O P Q R S T U V W X Y Z
 
-digit -> 
+digit ->
  0 1 2 3 4 5 6 7 8 9
 ```
 
-### Constants
+### Constants 数值型常量
+
+negative 只支持 10 进制的整数和浮点数，遵循以下规则
 
 ```text
 constant:
@@ -72,6 +76,14 @@ decimal-floating-constant:
 
 ### string-literal
 
+分析字符串的时候，我们会考虑到转译符，并且会无视除了转译和换行之外的任何字符。
+
+字符串总是由双引号开始，由双引号结尾。当字符串中有字符串的时候，应当使用`\"`的方法插入。例如
+
+`"I am \"Dustella\""`是一整个合法的字符串，而对于 `"I am "Dustella""`这个文本，词法分析器会认为"`"I am"`和`""`是字符串,`Dustella`被当成了标识符。这显然不是我们希望的。
+
+具体的语法规则如下
+
 ```text
 string-literal:
     " s-char-sequenceopt "
@@ -80,13 +92,15 @@ s-char-sequenceopt:
     【除了单独的\," 或者换行\n】之外的任何字符
 ```
 
-### operator
+### operator 操作符和界符
+
+negatives 支持
 
 ```text
 operator: one of
  [ ] ( ) { } .
  * + - ~ !
  / < > <= >= ==
- : ; 
-  += -= 
+ : ;
+  += -=
 ```
