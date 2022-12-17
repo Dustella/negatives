@@ -157,20 +157,21 @@
 <p>同时，这个良好的设计使得最后我们只读了一趟源程序，所有分析可以完全在一趟之内完成。</p>
 <h2 id="词法单元种类"><a class="header" href="#词法单元种类">词法单元种类</a></h2>
 <pre><code class="language-text">token:
-    keyword
-    identifier
-    constant
-    operator
-    string-literal
+    keyword // 关键字
+    identifier // 标识符
+    constant // 数值常量
+    operator // 操作符和界符
+    string-literal // 字符串字面量
 </code></pre>
-<h3 id="keyword"><a class="header" href="#keyword">keyword</a></h3>
-<p>negative具有以下关键字</p>
+<h3 id="keyword-关键字"><a class="header" href="#keyword-关键字">keyword 关键字</a></h3>
+<p>negative 具有以下关键字</p>
 <p><code>let</code>, <code>function</code>, <code>for</code>, <code>continue</code>, <code>else</code>, <code>if</code>, <code>return</code>, <code>elif</code>, <code>while</code>, <code>break</code>,</p>
-<h3 id="identifer"><a class="header" href="#identifer">identifer</a></h3>
-<p>negative 具有以下标识符</p>
-<pre><code class="language-text">id -&gt; 
- nondigit 
- id nondigit 
+<p>我们在分析出标识符之后，会判断标识符是否在关键字表中</p>
+<h3 id="identifer-标识符"><a class="header" href="#identifer-标识符">identifer 标识符</a></h3>
+<p>negative 具有以下标识符语法规则如下。标识符必须以字母开头，之后可以是下划线，数字或者字母</p>
+<pre><code class="language-text">id -&gt;
+ nondigit
+ id nondigit
  id digit
 
 no-digit -&gt;
@@ -179,10 +180,11 @@ no-digit -&gt;
  A B C D E F G H I J K L M
  N O P Q R S T U V W X Y Z
 
-digit -&gt; 
+digit -&gt;
  0 1 2 3 4 5 6 7 8 9
 </code></pre>
-<h3 id="constants"><a class="header" href="#constants">Constants</a></h3>
+<h3 id="constants-数值型常量"><a class="header" href="#constants-数值型常量">Constants 数值型常量</a></h3>
+<p>negative 只支持 10 进制的整数和浮点数，遵循以下规则</p>
 <pre><code class="language-text">constant:
  integer-constant
  floating-constant
@@ -199,19 +201,24 @@ decimal-floating-constant:
 
 </code></pre>
 <h3 id="string-literal"><a class="header" href="#string-literal">string-literal</a></h3>
+<p>分析字符串的时候，我们会考虑到转译符，并且会无视除了转译和换行之外的任何字符。</p>
+<p>字符串总是由双引号开始，由双引号结尾。当字符串中有字符串的时候，应当使用<code>\&quot;</code>的方法插入。例如</p>
+<p><code>&quot;I am \&quot;Dustella\&quot;&quot;</code>是一整个合法的字符串，而对于 <code>&quot;I am &quot;Dustella&quot;&quot;</code>这个文本，词法分析器会认为&quot;<code>&quot;I am&quot;</code>和<code>&quot;&quot;</code>是字符串,<code>Dustella</code>被当成了标识符。这显然不是我们希望的。</p>
+<p>具体的语法规则如下</p>
 <pre><code class="language-text">string-literal:
     &quot; s-char-sequenceopt &quot;
 
 s-char-sequenceopt:
     【除了单独的\,&quot; 或者换行\n】之外的任何字符
 </code></pre>
-<h3 id="operator"><a class="header" href="#operator">operator</a></h3>
+<h3 id="operator-操作符和界符"><a class="header" href="#operator-操作符和界符">operator 操作符和界符</a></h3>
+<p>negatives 支持</p>
 <pre><code class="language-text">operator: one of
  [ ] ( ) { } .
  * + - ~ !
  / &lt; &gt; &lt;= &gt;= ==
- : ; 
-  += -= 
+ : ;
+  += -=
 </code></pre>
 
                     </main>
