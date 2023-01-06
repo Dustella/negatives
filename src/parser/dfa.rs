@@ -189,11 +189,15 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
         WState::Prog => match cha {
             Token::Keyword(sym) => {
                 if sym == "if" {
-                    Ok(vec![WState::IfStmt, WState::Stmt])
+                    Ok(vec![WState::IfStmt, WState::Prog])
                 } else if sym == "while" {
-                    Ok(vec![WState::WhileStmt, WState::Stmt])
+                    Ok(vec![WState::WhileStmt, WState::Prog])
                 } else if sym == "let" {
-                    Ok(vec![WState::AssignStmt, WState::Stmt])
+                    Ok(vec![WState::AssignStmt, WState::Prog])
+                } else if sym == "function" {
+                    Ok(vec![WState::FunctionDecl, WState::Prog])
+                } else if sym == "for" {
+                    Ok(vec![WState::ForStmt, WState::Prog])
                 } else {
                     Err("Expected 'if', 'while' or 'let', found ".to_string() + &sym)
                 }
@@ -203,6 +207,45 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                     Ok(vec![WState::Empty])
                 } else {
                     Err("Expected '}', found ".to_string() + &sym)
+                }
+            }
+            _ => Err("".to_string()),
+        },
+        WState::ForStmt => match cha {
+            Token::Keyword(sym) => {
+                if sym == "for" {
+                    Ok(vec![
+                        WState::Terminal(Token::Keyword("for".to_string())),
+                        WState::Terminal(Token::Operator("(".to_string())),
+                        WState::AssignStmt,
+                        WState::Expr,
+                        WState::Terminal(Token::Operator(";".to_string())),
+                        WState::AssignStmt,
+                        WState::Terminal(Token::Operator(")".to_string())),
+                        WState::Terminal(Token::Operator("{".to_string())),
+                        WState::Stmt,
+                        WState::Terminal(Token::Operator("}".to_string())),
+                    ])
+                } else {
+                    Err("Expected 'for', found ".to_string() + &sym)
+                }
+            }
+            _ => Err("".to_string()),
+        },
+        WState::FunctionDecl => match cha {
+            Token::Keyword(sym) => {
+                if sym == "function" {
+                    Ok(vec![
+                        WState::Terminal(Token::Keyword("function".to_string())),
+                        WState::Terminal(Token::Identifier("_".to_string())),
+                        WState::Terminal(Token::Operator("(".to_string())),
+                        WState::Terminal(Token::Operator(")".to_string())),
+                        WState::Terminal(Token::Operator("{".to_string())),
+                        WState::Stmt,
+                        WState::Terminal(Token::Operator("}".to_string())),
+                    ])
+                } else {
+                    Err("Expected 'function', found ".to_string() + &sym)
                 }
             }
             _ => Err("".to_string()),

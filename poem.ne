@@ -1,12 +1,14 @@
-let x=1;
-let x=54325432;
+let x = 1;
+let x = 54325432;
 
-// dsavdsahbvkf
+//dsavdsahbvkf
 
-let a = "vfkavbkdsa\"fjsjauv";
+let a = "vfkavbkdsafjsjauv";
 
-if (  x  + 1 ) {
-    while ( i == 1 ){
-        let a = x + 1.1;
-    }
+for (let i =1;i==1;let i= 1;){
+  let m = 1;
+}
+
+function aaa(){
+  let m = 100;
 }

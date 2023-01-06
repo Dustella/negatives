@@ -15,6 +15,8 @@ pub enum WState {
     Factor,
     Terminal(Token),
     Empty,
+    ForStmt,
+    FunctionDecl,
 }
 impl WState {
     pub fn is_terminal(&self) -> bool {
