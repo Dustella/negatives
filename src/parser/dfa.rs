@@ -236,8 +236,12 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                     Ok(vec![WState::WhileStmt, WState::Stmt])
                 } else if sym == "let" {
                     Ok(vec![WState::AssignStmt, WState::Stmt])
+                } else if sym == "for" {
+                    Ok(vec![WState::ForStmt, WState::Stmt])
+                } else if sym == "if" {
+                    Ok(vec![WState::IfStmt, WState::Stmt])
                 } else {
-                    Err("Expected 'if', 'while' or 'let', found ".to_string() + &sym)
+                    Err("Expected 'if', 'while', 'for' or 'let' , found ".to_string() + &sym)
                 }
             }
             Token::Operator(sym) => {
@@ -263,7 +267,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                 } else if sym == "for" {
                     Ok(vec![WState::ForStmt, WState::Prog])
                 } else {
-                    Err("Expected 'if', 'while' or 'let', found ".to_string() + &sym)
+                    Err("Expected 'if', 'while', 'for' or 'let', found ".to_string() + &sym)
                 }
             }
             Token::Operator(sym) => {
@@ -273,6 +277,7 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                     Err("Expected '}', found ".to_string() + &sym)
                 }
             }
+            Token::Identifier(_) => Ok(vec![WState::UpdateStmt, WState::Prog]),
             _ => Err("".to_string()),
         },
         WState::ForStmt => match cha {
@@ -356,6 +361,13 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                     Ok(vec![WState::Empty])
                 }
             }
+            Token::Operator(sym) => {
+                if sym == "}" || sym == "$" {
+                    Ok(vec![WState::Empty])
+                } else {
+                    Err("Expected '}', found ".to_string() + &sym)
+                }
+            }
             _ => Err("".to_string()),
         },
         WState::ElseExt => match cha {
@@ -377,6 +389,17 @@ pub fn trans(state: &WState, cha: Token) -> Result<Vec<WState>, String> {
                         WState::Stmt,
                         WState::Terminal(Token::Operator("}".to_string())),
                     ])
+                }
+            }
+            Token::Operator(sym) => {
+                if sym == "{" {
+                    Ok(vec![
+                        WState::Terminal(Token::Operator("{".to_string())),
+                        WState::Stmt,
+                        WState::Terminal(Token::Operator("}".to_string())),
+                    ])
+                } else {
+                    Err("Expected '{', found ".to_string() + &sym)
                 }
             }
             _ => Err("".to_string()),
