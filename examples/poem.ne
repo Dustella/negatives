@@ -5,10 +5,12 @@ let x = 54325432;
 
 let a = "vfkavbkdsafjsjauv";
 
-for (let i =1;i==1;let i= 1;){
+let res = a + b * c == 0;
+
+for (i = 1 ;i==1;i = i+1 ){  
   let m = 1;
 }
 
-function aaa(){
+function aaa(a,b,c){
   let m = 100;
 }
