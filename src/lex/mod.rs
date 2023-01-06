@@ -1,5 +1,5 @@
 mod inspector;
-use self::{gen_token::gen_token, table::ErrType};
+pub use self::{gen_token::gen_token, table::ErrType};
 pub use crate::lex::inspector::*;
 use crate::lex::{dfa::dfa_transform, table::DfaState as state};
 // expose state to public
@@ -9,7 +9,7 @@ use colored::*;
 pub struct Tokenizer {
     current_state: state,
     current_line: usize,
-    current_location_inline: usize,
+    pub current_location_inline: usize,
     index: usize,
     source: String,
     pub finished: bool,
@@ -58,8 +58,11 @@ impl Tokenizer {
         );
         println!("{}", err.0.red());
         println!("{}^ <-here", "-".repeat(err.1).to_string());
-        print!("{}", err.2.to_string());
-        println!(" '{}'", self.get_last_char().escape_default());
+        if let ErrType::Null = err.2 {
+        } else {
+            print!("{}", err.2.to_string());
+            println!(" '{}'", self.get_last_char().escape_default());
+        }
     }
 
     pub fn get_next_token(&mut self) -> Result<Token, (String, usize, ErrType)> {

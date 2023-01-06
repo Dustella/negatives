@@ -7,7 +7,7 @@ let a = "vfkavbkdsafjsjauv";
 
 let res = a + b * c == 0;
 
-for (i = 1 ;i==1;i = i+1 ){  
+for (i = 1 ;i==1;i = i+1 )  
   let m = 1;
 }
 

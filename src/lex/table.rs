@@ -39,6 +39,7 @@ pub enum ErrType {
     UnexpectedChar,
     ExpectNumber,
     ExpectStringEnd,
+    Null, // for parser errs
 }
 
 impl fmt::Display for Token {

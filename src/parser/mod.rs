@@ -24,6 +24,14 @@ pub fn parse(tokenizer: &mut Tokenizer) -> Result<(), ()> {
                 stack.pop();
                 current_token = tokenizer.get_next_token().unwrap();
             } else {
+                println!();
+                tokenizer.print_err((
+                    tokenizer.get_current_line(),
+                    tokenizer.current_location_inline,
+                    ErrType::Null,
+                ));
+                println!("Expected {:?}, but got {:?}", cha, current_token);
+                println!();
                 return Err(());
             }
         } else {
@@ -46,6 +54,6 @@ pub fn parse(tokenizer: &mut Tokenizer) -> Result<(), ()> {
     // node.print(0);
 }
 
-use crate::lex::{Token, Tokenizer};
+use crate::lex::{ErrType, Token, Tokenizer};
 
 use self::states::WState;
